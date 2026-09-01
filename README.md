@@ -92,8 +92,10 @@ All files are structured for direct execution from a mirrored root directory nam
    pip install transformers==4.38.1 tokenizers==0.15.2 flwr==1.8.0 onnxruntime scikit-learn pandas --no-cache-dir
    pip install "protobuf>=4.25.2,<5.0.0"
    ```
+#### 1.3 gRPC & Protocol Buffer Setup
+The pre-compiled Protocol Buffer files (`network_communication_pb2.py` and `network_communication_pb2_grpc.py`) are platform-independent and work directly out of the box on both the Windows and Raspberry Pi federated phishing folders. 
 
-#### 1.3 Bi-Directional Network Ping Check
+#### 1.4 Bi-Directional Network Ping Check
 Verify clean socket connectivity across the subnet before launching scripts
 
 ---
@@ -127,7 +129,7 @@ The stratified 100-sample UCI SMS Spam Collection benchmark dataset (`local_val.
 
 ### Step 4: Configure OpenAI API Authentication (Tier-1 Cloud Teacher)
 
-On the **Windows Workstation**, bind your developer credentials into the system environment memory variables:
+The federated server automatically imports `orchestrator_pipeline.py` to communicate with the OpenAI API and synthesise training lures dynamically for each round. API key bound into workstation environment variables:
 
 ```powershell
 # Set for current process session
@@ -142,7 +144,7 @@ $env:OPENAI_API_KEY="sk-proj-xSUTf3qCW9PKRBLKI2EFQQVWjAd8elJ7E5ZEG8UVx2ejVYjzGNX
 ### Step 5: Execute 50-Round Federated Training Experiments
 
 #### Experiment 1: Balanced (IID) Baseline Run
-Streams uniform 10-sample lesson packages (5 benign / 5 phishing) across all participating client nodes.
+The server imports `orchestrator_pipeline.py` to synthesise, guard, and tokenise uniform 10-sample lesson packages (5 benign / 5 phishing) streamed to all participating client nodes.
 
 1. **Workstation Terminal 1 (Flower Server):**
    ```powershell
@@ -174,7 +176,7 @@ Outputs Generated: Intermediate checkpoint files (global_model_round_1.pkl throu
 
 
 #### Experiment 2: Skewed (Non-IID) Stress Test Run
-Broadcasts 20-sample lesson packages where clients autonomously slice data locally according to their assigned profile handshake:
+The server uses `orchestrator_pipeline.py` to broadcast 20-sample lesson packages where clients autonomously slice data locally according to their assigned profile handshake:
 * **NON_IID_Virtual Client A (`safe_user`):** Slices indices 0–9 (100% benign).
 * **NON_IID_Virtual Client B (`corporate_mix`):** Slices indices 0–4 and 10–14 (50/50 corporate mix).
 * **NON_IID_Raspberry Pi 5 (`raspberry_pi_5`):** Slices indices 10–19 (100% aggressive phishing).
