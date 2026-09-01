@@ -171,7 +171,7 @@ Streams uniform 10-sample lesson packages (5 benign / 5 phishing) across all par
    python3 IID_federated_client_Pi.py
    ```
 Outputs Generated: Intermediate checkpoint files (global_model_round_1.pkl through global_model_round_50.pkl) and iid_baseline_metrics.csv (Total runtime: ~42,536 seconds / 11h 48m). The final converged checkpoint (global_model_round_50.pkl) is retained for downstream compilation and quantisation.
----
+
 
 #### Experiment 2: Skewed (Non-IID) Stress Test Run
 Broadcasts 20-sample lesson packages where clients autonomously slice data locally according to their assigned profile handshake:
