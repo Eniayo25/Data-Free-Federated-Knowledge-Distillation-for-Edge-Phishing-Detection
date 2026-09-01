@@ -283,5 +283,5 @@ On the **Windows Workstation**, map the unpickled parameters into PyTorch state 
 | **Precision** | 0.9216 | 0.9655 | 1 False Alarm under Non-IID |
 | **Recall** | 0.9400 | 0.5600 | 22 False Negatives under Non-IID|
 | **F1-Score** | 0.9307 | 0.7089 | Target (>0.85) Achieved under IID|
-| **Mean Inference Latency** | 50.31 ms | 50.43 ms | Real-Time ARM Execution[cite: 1, 2] |
-| **P95 Latency** | 50.82 ms | 51.65 ms | Stable Execution Without Jitter[cite: 1, 2] |
+| **Mean Inference Latency** | 50.31 ms | 50.43 ms | Real-Time ARM Execution |
+| **P95 Latency** | 50.82 ms | 51.65 ms | Stable Execution Without Jitter |
