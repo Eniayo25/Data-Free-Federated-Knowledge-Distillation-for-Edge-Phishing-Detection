@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package federated;
+
+// Defines the transmission contract
+service ModelOrchestrator {
+    rpc StreamWeights (ModelWeights) returns (Acknowledgement);
+}
+
+// Defines the parameters structure
+message ModelWeights {
+    bytes weights_matrix = 1;
+    int32 client_id = 2;
+    int32 current_round = 3;
+}
+
+message Acknowledgement {
+    string status_message = 1;
+    bool success = 2;
+}
