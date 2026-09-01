@@ -10,36 +10,37 @@ All files are structured for direct execution from a mirrored root directory nam
 
 | File Name | Environment | Chronological Role & Description |
 | :--- | :--- | :--- |
-| `requirements.txt` | Both | Pinned software dependency configuration (`flwr==1.8.0`, `torch==2.2.1`, `transformers==4.38.1`, `tokenizers==0.15.2`). |
-| `network_communication.proto` | Both | Protocol Buffer schema defining the `ModelOrchestrator` service and `ModelWeights` binary structure. |
-| `network_communication_pb2.py` | Both | Generated Protocol Buffer Python stubs for binary tensor packing. |
-| `network_communication_pb2_grpc.py` | Both | Generated gRPC transport stubs managing client-server streaming sockets. |
-| `fetch_public_baseline.py` | Workstation | Automated ingestion script extracting the stratified 100-sample UCI SMS Spam Collection. |
-| `local_val.csv` | Both | Stratified 100-sample evaluation baseline (50 safe, 50 phishing). |
-| `orchestrator_pipeline.py` | Workstation | GPT-4o curriculum generator with structural isolation tags and defensive data guards. |
-| `IID_federated_server.py` | Workstation | Flower federated server streaming 10-sample balanced lesson packages for IID baseline runs. |
-| `federated_server.py` | Workstation | Flower federated server broadcasting 20-sample lesson packages for Non-IID stress test runs. |
-| `IID_virtual_client_A.py` | Workstation | Simulated client node A training on balanced lesson packages for IID baseline runs. |
-| `virtual_client_A.py` | Workstation | Simulated client node A executing client-side slicing for benign-only data (`safe_user`). |
-| `IID_virtual_client_B.py` | Workstation | Simulated client node B training on balanced lesson packages for IID baseline runs. |
-| `virtual_client_B.py` | Workstation | Simulated client node B executing client-side slicing for a 50/50 mix (`corporate_mix`). |
-| `IID_federated_client_Pi.py` | Pi 5 | Physical edge client running balanced IID training with single-thread and pacing guards. |
-| `federated_client.py` | Pi 5 | Physical edge client executing client-side slicing for aggressive phishing lures. |
-| `IID_export_pytorch_model.py` | Workstation | Deserialises `global_model_round_50.pkl` into PyTorch state dictionary `iid_global_model.pth`. |
-| `export_pytorch_model.py` | Workstation | Deserialises `non_iid_model_round_50.pkl` into PyTorch state dictionary `non_iid_global_model.pth`. |
-| `compile_and_quantize.py` | Workstation | Freezes ONNX computational graphs and executes dynamic INT8 Post-Training Quantisation. |
-| `edge_benchmark.py` | Pi 5 | Measures inference latency with `time.perf_counter()` and logs Scikit-learn evaluation metrics. |
-| `iid_baseline_quantized.onnx` | Pi 5 | Compiled INT8 graph for the balanced IID model (64.26 MB). |
-| `non_iid_stress_quantized.onnx` | Pi 5 | Compiled INT8 graph for the skewed Non-IID model (64.26 MB). |
-| `iid_baseline_metrics.csv` | Workstation | 50-round convergence telemetry log for the IID baseline experiment. |
-| `non_iid_baseline_metrics.csv` | Workstation | 50-round convergence telemetry log for the Non-IID stress test experiment. |
-| `iid_quantized_predictions.csv` | Pi 5 | Raw classification outputs on the validation set from the IID model. |
-| `non_iid_quantized_predictions.csv`| Pi 5 | Raw classification outputs on the validation set from the Non-IID model. |
+| `requirements.txt` | Both | Pinned environment package dependencies (`flwr`, `torch`, `transformers`). |
+| `network_communication.proto` | Both | Protocol Buffer schema for gRPC service and message contracts. |
+| `network_communication_pb2.py` | Both | Generated Python stubs for binary tensor serialisation. |
+| `network_communication_pb2_grpc.py` | Both | Generated Python stubs for gRPC streaming transport. |
+| `fetch_public_baseline.py` | Workstation | Downloads and extracts the 100-sample UCI SMS validation set. |
+| `local_val.csv` | Both | Stratified 100-sample validation dataset (50 safe, 50 phishing). |
+| `orchestrator_pipeline.py` | Workstation | GPT-4o generator with prompt guards and in-memory tokenisation. |
+| `IID_federated_server.py` | Workstation | Flower server for balanced 10-sample IID training rounds. |
+| `IID_virtual_client_A.py` | Workstation | Virtual client A training on balanced IID payloads. |
+| `IID_virtual_client_B.py` | Workstation | Virtual client B training on balanced IID payloads. |
+| `IID_federated_client_Pi.py` | Pi 5 | Pi 5 client for balanced IID training with hardware shields. |
+| `global_model_round_50.pkl` | Workstation | Final round 50 aggregated model checkpoint (IID). |
+| `IID_export_pytorch_model.py` | Workstation | Converts `global_model_round_50.pkl` into `.pth` format. |
+| `iid_global_model.pth` | Workstation | PyTorch state dictionary for the IID baseline model. |
+| `federated_server.py` | Workstation | Flower server broadcasting 20-sample Non-IID packages. |
+| `virtual_client_A.py` | Workstation | Virtual client A slicing benign-only data (`safe_user`). |
+| `virtual_client_B.py` | Workstation | Virtual client B slicing a 50/50 mix (`corporate_mix`). |
+| `federated_client.py` | Pi 5 | Pi 5 client slicing phishing lures (`high_risk_target`). |
+| `non_iid_model_round_50.pkl` | Workstation | Final round 50 aggregated model checkpoint (Non-IID). |
+| `export_pytorch_model.py` | Workstation | Converts `non_iid_model_round_50.pkl` into `.pth` format. |
+| `non_iid_global_model.pth` | Workstation | PyTorch state dictionary for the Non-IID model. |
+| `compile_and_quantize.py` | Workstation | Traces and compiles `.pth` models into INT8 ONNX graphs. |
+| `iid_baseline_quantized.onnx` | Pi 5 | INT8 quantised ONNX model for IID baseline (64.26 MB). |
+| `non_iid_stress_quantized.onnx` | Pi 5 | INT8 quantised ONNX model for Non-IID stress test (64.26 MB). |
+| `edge_benchmark.py` | Pi 5 | Measures inference latency and classification metrics on Pi 5. |
+| `iid_baseline_metrics.csv` | Workstation | 50-round convergence telemetry log for the IID run. |
+| `non_iid_baseline_metrics.csv` | Workstation | 50-round convergence telemetry log for the Non-IID run. |
+| `iid_quantized_predictions.csv` | Pi 5 | Edge classification predictions from the IID model. |
+| `non_iid_quantized_predictions.csv`| Pi 5 | Edge classification predictions from the Non-IID model. |
 | `generate_plots.py` | Workstation | Generates 300 DPI annotated confusion matrix heatmaps. |
-| `plot_real_history.py` | Workstation | Generates 50-round comparative federated convergence trajectory curves. |
-
-> **External Checkpoints (>100 MB):** Raw 50-round training checkpoints (`global_model_round_50.pkl`, `non_iid_model_round_50.pkl`, `iid_global_model.pth`, and `non_iid_global_model.pth`) are hosted on OneDrive due to file size limits: `[INSERT_YOUR_ONEDRIVE_LINK_HERE]`.
-
+| `plot_real_history.py` | Workstation | Plots 50-round comparative federated convergence curves. |
 ---
 
 ## Hardware and Network Prerequisites
