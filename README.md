@@ -32,8 +32,10 @@ All files are structured for direct execution from a mirrored root directory nam
 | `NON_IID_export_pytorch_model.py` | Workstation | Converts `non_iid_model_round_50.pkl` into `.pth` format. |
 | `non_iid_global_model.pth` | Workstation | PyTorch state dictionary for the Non-IID model. |
 | `compile_and_quantize.py` | Workstation | Traces and compiles `.pth` models into INT8 ONNX graphs. |
-| `iid_baseline_quantized.onnx` | Pi 5 | INT8 quantised ONNX model for IID baseline (64.26 MB). |
-| `non_iid_stress_quantized.onnx` | Pi 5 | INT8 quantised ONNX model for Non-IID stress test (64.26 MB). |
+| `iid_baseline.onnx` | Workstation | Intermediate FP32 unquantised ONNX graph for IID baseline (~255.55 MB). |
+| `non_iid_stress.onnx` | Workstation | Intermediate FP32 unquantised ONNX graph for Non-IID run (~255.55 MB). |
+| `iid_baseline_quantized.onnx` | Pi 5 | INT8 quantised ONNX model for IID baseline (~64.26 MB). |
+| `non_iid_stress_quantized.onnx` | Pi 5 | INT8 quantised ONNX model for Non-IID stress test (~64.26 MB). |
 | `edge_benchmark.py` | Pi 5 | Measures inference latency and classification metrics on Pi 5. |
 | `iid_baseline_metrics.csv` | Workstation | 50-round convergence telemetry log for the IID run. |
 | `non_iid_baseline_metrics.csv` | Workstation | 50-round convergence telemetry log for the Non-IID run. |
