@@ -6,51 +6,52 @@ All files are structured for direct execution from a mirrored root directory nam
 
 ---
 
-## Repository File Manifest & Execution Map
+## Repository & Execution Map
 
 | File Name | Environment | Chronological Role & Description |
 | :--- | :--- | :--- |
-| `requirements.txt` | Both | Pinned software dependency configuration (`flwr==1.8.0`, `torch==2.2.1`, `transformers==4.38.1`, `tokenizers==0.15.2`). |
-| `network_communication.proto` | Both | Protocol Buffer schema defining the `ModelOrchestrator` service and `ModelWeights` binary structure. |
-| `network_communication_pb2.py` | Both | Generated Protocol Buffer Python stubs for binary tensor packing. |
-| `network_communication_pb2_grpc.py` | Both | Generated gRPC transport stubs managing client-server streaming sockets. |
-| `fetch_public_baseline.py` | Workstation | Automated ingestion script extracting the stratified 100-sample UCI SMS Spam Collection. |
-| `local_val.csv` | Both | Stratified 100-sample evaluation baseline (50 safe, 50 phishing). |
-| `orchestrator_pipeline.py` | Workstation | GPT-4o curriculum generator with structural isolation tags and defensive data guards. |
-| `IID_federated_server.py` | Workstation | Flower federated server streaming 10-sample balanced lesson packages for IID baseline runs. |
-| `federated_server.py` | Workstation | Flower federated server broadcasting 20-sample lesson packages for Non-IID stress test runs. |
-| `IID_virtual_client_A.py` | Workstation | Simulated client node A training on balanced lesson packages for IID baseline runs. |
-| `virtual_client_A.py` | Workstation | Simulated client node A executing client-side slicing for benign-only data (`safe_user`). |
-| `IID_virtual_client_B.py` | Workstation | Simulated client node B training on balanced lesson packages for IID baseline runs. |
-| `virtual_client_B.py` | Workstation | Simulated client node B executing client-side slicing for a 50/50 mix (`corporate_mix`). |
-| `IID_federated_client_Pi.py` | Pi 5 | Physical edge client running balanced IID training with single-thread and pacing guards. |
-| `federated_client.py` | Pi 5 | Physical edge client executing client-side slicing for aggressive phishing lures. |
-| `IID_export_pytorch_model.py` | Workstation | Deserialises `global_model_round_50.pkl` into PyTorch state dictionary `iid_global_model.pth`. |
-| `export_pytorch_model.py` | Workstation | Deserialises `non_iid_model_round_50.pkl` into PyTorch state dictionary `non_iid_global_model.pth`. |
-| `compile_and_quantize.py` | Workstation | Freezes ONNX computational graphs and executes dynamic INT8 Post-Training Quantisation. |
-| `edge_benchmark.py` | Pi 5 | Measures inference latency with `time.perf_counter()` and logs Scikit-learn evaluation metrics. |
-| `iid_baseline_quantized.onnx` | Pi 5 | Compiled INT8 graph for the balanced IID model (64.26 MB). |
-| `non_iid_stress_quantized.onnx` | Pi 5 | Compiled INT8 graph for the skewed Non-IID model (64.26 MB). |
-| `iid_baseline_metrics.csv` | Workstation | 50-round convergence telemetry log for the IID baseline experiment. |
-| `non_iid_baseline_metrics.csv` | Workstation | 50-round convergence telemetry log for the Non-IID stress test experiment. |
-| `iid_quantized_predictions.csv` | Pi 5 | Raw classification outputs on the validation set from the IID model. |
-| `non_iid_quantized_predictions.csv`| Pi 5 | Raw classification outputs on the validation set from the Non-IID model. |
-| `generate_plots.py` | Workstation | Generates 300 DPI annotated confusion matrix heatmaps. |
-| `plot_real_history.py` | Workstation | Generates 50-round comparative federated convergence trajectory curves. |
-
-> **External Checkpoints (>100 MB):** Raw 50-round training checkpoints (`global_model_round_50.pkl`, `non_iid_model_round_50.pkl`, `iid_global_model.pth`, and `non_iid_global_model.pth`) are hosted on OneDrive due to file size limits: `[INSERT_YOUR_ONEDRIVE_LINK_HERE]`.
-
+| `requirements.txt` | Both | Pinned environment package dependencies (`flwr`, `torch`, `transformers`). |
+| `network_communication.proto` | Both | Protocol Buffer schema for gRPC service and message contracts. |
+| `network_communication_pb2.py` | Both | Python stubs for binary tensor serialisation. |
+| `network_communication_pb2_grpc.py` | Both | Python stubs for gRPC streaming transport. |
+| `fetch_public_baseline.py` | Workstation | Downloads and extracts the 100-sample UCI SMS validation set. |
+| `local_val.csv` | Both | Stratified 100-sample validation dataset (50 safe, 50 phishing). |
+| `orchestrator_pipeline.py` | Workstation | GPT-4o generator with prompt guards and in-memory tokenisation. |
+| `IID_federated_server.py` | Workstation | Flower server for balanced 10-sample IID training rounds. |
+| `IID_virtual_client_A.py` | Workstation | Virtual client A training on balanced IID payloads. |
+| `IID_virtual_client_B.py` | Workstation | Virtual client B training on balanced IID payloads. |
+| `IID_federated_client_Pi.py` | Pi 5 | Pi 5 client for balanced IID training with hardware shields. |
+| `global_model_round_50.pkl` | Workstation | Final round 50 aggregated model checkpoint (IID). |
+| `IID_export_pytorch_model.py` | Workstation | Converts `global_model_round_50.pkl` into `.pth` format. |
+| `iid_global_model.pth` | Workstation | PyTorch state dictionary for the IID baseline model. |
+| `NON_IID_federated_server.py` | Workstation | Flower server broadcasting 20-sample Non-IID packages. |
+| `NON_IID_virtual_client_A.py` | Workstation | Virtual client A slicing benign-only data (`safe_user`). |
+| `NON_IID_virtual_client_B.py` | Workstation | Virtual client B slicing a 50/50 mix (`corporate_mix`). |
+| `NON_IID_federated_client.py` | Pi 5 | Pi 5 client slicing phishing lures (`high_risk_target`). |
+| `non_iid_model_round_50.pkl` | Workstation | Final round 50 aggregated model checkpoint (Non-IID). |
+| `NON_IID_export_pytorch_model.py` | Workstation | Converts `non_iid_model_round_50.pkl` into `.pth` format. |
+| `non_iid_global_model.pth` | Workstation | PyTorch state dictionary for the Non-IID model. |
+| `compile_and_quantize.py` | Workstation | Traces and compiles `.pth` models into INT8 ONNX graphs. |
+| `iid_baseline_quantized.onnx` | Pi 5 | INT8 quantised ONNX model for IID baseline (64.26 MB). |
+| `non_iid_stress_quantized.onnx` | Pi 5 | INT8 quantised ONNX model for Non-IID stress test (64.26 MB). |
+| `edge_benchmark.py` | Pi 5 | Measures inference latency and classification metrics on Pi 5. |
+| `iid_baseline_metrics.csv` | Workstation | 50-round convergence telemetry log for the IID run. |
+| `non_iid_baseline_metrics.csv` | Workstation | 50-round convergence telemetry log for the Non-IID run. |
+| `iid_quantized_predictions.csv` | Pi 5 | Edge classification predictions from the IID model. |
+| `non_iid_quantized_predictions.csv`| Pi 5 | Edge classification predictions from the Non-IID model. |
+| `generate_plots.py` | Workstation | Generates confusion matrix heatmaps. |
+| `convergance.py` | Workstation | Plots 50-round comparative federated convergence curves. |
 ---
 
 ## Hardware and Network Prerequisites
 
-* **Central Workstation (Tier 2):** Windows 11 PC, Intel Core i7, 16 GB RAM, dedicated GPU. Static IP: `192.168.1.10`.
-* **Physical Edge Node (Tier 3):** Raspberry Pi 5 (ARM Cortex-A76, 2 GB RAM, 64-bit Raspberry Pi OS Debian Bookworm). Static IP: `192.168.1.20`.
+* **Central Workstation (Tier 2):** Windows 11 PC, Intel Core i7, 16 GB RAM, dedicated GPU. Static IP.
+* **Physical Edge Node (Tier 3):** Raspberry Pi 5 (ARM Cortex-A76, 2 GB RAM, 64-bit Raspberry Pi OS Debian Bookworm). Static IP.
 * **Network Infrastructure:** Dedicated dual-band router (2.4 GHz / 5.0 GHz) isolating federated socket traffic.
 
 ---
 
-## Step-by-Step Reproduction Guide
+## Reproduction Guide
 
 ### Step 1: Environment Setup & Network Binding
 
@@ -61,7 +62,7 @@ All files are structured for direct execution from a mirrored root directory nam
    ```
 2. Navigate to your project root folder, initialise the virtual environment `venv`, and activate it:
    ```powershell
-   cd C:\Users\eniayo25\federated_phishing
+   cd C:\Users\user\federated_phishing
    python -m venv venv
    .\venv\Scripts\Activate.ps1
    ```
@@ -91,11 +92,11 @@ All files are structured for direct execution from a mirrored root directory nam
    pip install transformers==4.38.1 tokenizers==0.15.2 flwr==1.8.0 onnxruntime scikit-learn pandas --no-cache-dir
    pip install "protobuf>=4.25.2,<5.0.0"
    ```
+#### 1.3 gRPC & Protocol Buffer Setup
+The pre-compiled Protocol Buffer files (`network_communication_pb2.py` and `network_communication_pb2_grpc.py`) are platform-independent and work directly out of the box on both the Windows and Raspberry Pi federated phishing folders. 
 
-#### 1.3 Bi-Directional Network Ping Check
-Verify clean socket connectivity across the subnet before launching scripts:
-* **On Windows Workstation:** `ping 192.168.1.20`
-* **On Raspberry Pi 5:** `ping -c 4 192.168.1.10`
+#### 1.4 Bi-Directional Network Ping Check
+Verify clean socket connectivity across the subnet before launching scripts
 
 ---
 
@@ -116,33 +117,26 @@ Run these commands on the Raspberry Pi 5 to eliminate undervoltage shutdowns (`0
    sudo systemctl set-default multi-user.target
    sudo reboot
    ```
-*(Note: Hardware execution limits, including single-core CPU capping via `torch.set_num_threads(1)` and batch pacing delays via `time.sleep(0.1)`, are already pre-programmed inside `IID_federated_client_Pi.py` and `federated_client.py`).*
+*(Note: Hardware execution limits, including single-core CPU capping via `torch.set_num_threads(1)` and batch pacing delays via `time.sleep(0.1)`, are already pre-programmed inside `IID_federated_client_Pi.py` and `NON_IID_federated_client.py`).*
 
 ---
 
-### Step 3: Extract the Independent Validation Baseline
+### Step 3: Validation Baseline Verification
 
-On the **Windows Workstation**, run the ingestion script to download the peer-reviewed UCI SMS Spam Collection and construct the stratified 100-sample validation dataset:
-```powershell
-python fetch_public_baseline.py
-```
-Transfer the generated `local_val.csv` to the Raspberry Pi 5:
-```powershell
-scp local_val.csv eniayo@192.168.1.20:~/federated_phishing/
-```
+The stratified 100-sample UCI SMS Spam Collection benchmark dataset (`local_val.csv` — 50 benign, 50 phishing) is already pre-packaged in the repository root on both the Federated_Phishing_server and the Federated_Phishing_RaspberryPi. 
 
 ---
 
 ### Step 4: Configure OpenAI API Authentication (Tier-1 Cloud Teacher)
 
-On the **Windows Workstation**, bind your developer credentials into the system environment memory variables:
+The federated server automatically imports `orchestrator_pipeline.py` to communicate with the OpenAI API and synthesise training lures dynamically for each round. API key bound into workstation environment variables:
 
 ```powershell
 # Set for current process session
-$env:OPENAI_API_KEY="your_actual_private_api_key_here"
+$env:OPENAI_API_KEY="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"
 
 # Set persistently for user environment
-[Environment]::SetEnvironmentVariable("OPENAI_API_KEY", "your_actual_private_api_key_here", "User")
+[Environment]::SetEnvironmentVariable("OPENAI_API_KEY", "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", "User")
 ```
 
 ---
@@ -150,24 +144,24 @@ $env:OPENAI_API_KEY="your_actual_private_api_key_here"
 ### Step 5: Execute 50-Round Federated Training Experiments
 
 #### Experiment 1: Balanced (IID) Baseline Run
-Streams uniform 10-sample lesson packages (5 benign / 5 phishing) across all participating client nodes.
+The server imports `orchestrator_pipeline.py` to synthesise, guard, and tokenise uniform 10-sample lesson packages (5 benign / 5 phishing) streamed to all participating client nodes.
 
 1. **Workstation Terminal 1 (Flower Server):**
    ```powershell
-   cd C:\Users\eniayo25\federated_phishing
+   cd C:\Users\user\federated_phishing
    .\venv\Scripts\Activate.ps1
-   $env:OPENAI_API_KEY="your_actual_private_api_key_here"
+   $env:OPENAI_API_KEY="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"
    python IID_federated_server.py
    ```
 2. **Workstation Terminal 2 (Virtual Client A):**
    ```powershell
-   cd C:\Users\eniayo25\federated_phishing
+   cd C:\Users\user\federated_phishing
    .\venv\Scripts\Activate.ps1
    python IID_virtual_client_A.py
    ```
 3. **Workstation Terminal 3 (Virtual Client B):**
    ```powershell
-   cd C:\Users\eniayo25\federated_phishing
+   cd C:\Users\user\federated_phishing
    .\venv\Scripts\Activate.ps1
    python IID_virtual_client_B.py
    ```
@@ -178,54 +172,53 @@ Streams uniform 10-sample lesson packages (5 benign / 5 phishing) across all par
    source target_env/bin/activate
    python3 IID_federated_client_Pi.py
    ```
-*Outputs Generated:* `global_model_round_50.pkl` and `iid_baseline_metrics.csv` (Total runtime: ~42,536 seconds / 11h 48m, converging at 90.0% accuracy).
+Outputs Generated: Intermediate checkpoint files (global_model_round_1.pkl through global_model_round_50.pkl) and iid_baseline_metrics.csv (Total runtime: ~42,536 seconds / 11h 48m). The final converged checkpoint (global_model_round_50.pkl) is retained for downstream compilation and quantisation.
 
----
 
 #### Experiment 2: Skewed (Non-IID) Stress Test Run
-Broadcasts 20-sample lesson packages where clients autonomously slice data locally according to their assigned profile handshake:
-* **Virtual Client A (`safe_user`):** Slices indices 0–9 (100% benign).
-* **Virtual Client B (`corporate_mix`):** Slices indices 0–4 and 10–14 (50/50 corporate mix).
-* **Raspberry Pi 5 (`raspberry_pi_5`):** Slices indices 10–19 (100% aggressive phishing).
+The server uses `orchestrator_pipeline.py` to broadcast 20-sample lesson packages where clients autonomously slice data locally according to their assigned profile handshake:
+* **NON_IID_Virtual Client A (`safe_user`):** Slices indices 0–9 (100% benign).
+* **NON_IID_Virtual Client B (`corporate_mix`):** Slices indices 0–4 and 10–14 (50/50 corporate mix).
+* **NON_IID_Raspberry Pi 5 (`raspberry_pi_5`):** Slices indices 10–19 (100% aggressive phishing).
 
 1. **Workstation Terminal 1 (Non-IID Server):**
    ```powershell
-   cd C:\Users\eniayo25\federated_phishing
+   cd C:\Users\user\federated_phishing
    .\venv\Scripts\Activate.ps1
-   $env:OPENAI_API_KEY="your_actual_private_api_key_here"
-   python federated_server.py
+   $env:OPENAI_API_KEY="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"
+   python NON_IID_federated_server.py
    ```
 2. **Workstation Terminal 2 (Non-IID Virtual Client A):**
    ```powershell
-   cd C:\Users\eniayo25\federated_phishing
+   cd C:\Users\user\federated_phishing
    .\venv\Scripts\Activate.ps1
-   python virtual_client_A.py
+   python NON_IID_virtual_client_A.py
    ```
 3. **Workstation Terminal 3 (Non-IID Virtual Client B):**
    ```powershell
-   cd C:\Users\eniayo25\federated_phishing
+   cd C:\Users\user\federated_phishing
    .\venv\Scripts\Activate.ps1
-   python virtual_client_B.py
+   python NON_IID_virtual_client_B.py
    ```
 4. **Raspberry Pi 5 Remote Shell (Non-IID Physical Client in `tmux`):**
    ```bash
    tmux a -t fed_session
    cd ~/federated_phishing
    source target_env/bin/activate
-   python3 federated_client.py
+   python3 NON_IID_federated_client.py
    ```
-*Outputs Generated:* `non_iid_model_round_50.pkl` and `non_iid_baseline_metrics.csv` (Total runtime: ~47,519 seconds / 13h 11m, consolidating at 77.0% accuracy).
+Outputs Generated: Intermediate checkpoint files (non_iid_model_round_1.pkl through non_iid_model_round_50.pkl) and non_iid_baseline_metrics.csv (Total runtime: ~47,519 seconds / 13h 11m). The final converged checkpoint (non_iid_model_round_50.pkl) is retained for downstream compilation and quantisation.
 
 ---
 
 ### Step 6: Model Checkpoint Conversion & INT8 Dynamic Quantisation
 
-On the **Windows Workstation**, map the unpickled parameters into PyTorch state dictionaries and compile them into INT8 ONNX computation graphs:
+On the **Windows Workstation**, compile and quantize model into INT8 ONNX computation graphs:
 
-1. **Convert Checkpoint Pickle Files to PyTorch State Dictionaries:**
+1. **Convert Checkpoint Files to PyTorch State Dictionaries:**
    ```powershell
    python IID_export_pytorch_model.py
-   python export_pytorch_model.py
+   python NON_IID_export_pytorch_model.py
    ```
    *Outputs:* `iid_global_model.pth` and `non_iid_global_model.pth` (~261.58 MB each).
 2. **Execute Graph Tracing & INT8 Dynamic Quantisation:**
@@ -259,18 +252,18 @@ On the **Windows Workstation**, map the unpickled parameters into PyTorch state 
 
 1. **Pull Prediction CSVs to Windows Workstation:**
    ```powershell
-   cd C:\Users\eniayo25\federated_phishing
+   cd C:\Users\user\federated_phishing
    scp eniayo@192.168.1.20:~/federated_phishing/*_predictions.csv .
    ```
-2. **Generate 300 DPI Publication-Ready Figures:**
+2. **Generate Figures:**
    ```powershell
    python generate_plots.py
-   python plot_real_history.py
+   python convergence.py
    ```
    *Generated Outputs in Project Folder:*
-   * `confusion_matrix_iid_2.png`: 300 DPI annotated heatmap displaying 46 TN, 4 FP, 3 FN, 47 TP.
-   * `confusion_matrix_non_iid_2.png`: 300 DPI annotated heatmap displaying 49 TN, 1 FP, 22 FN, 28 TP.
-   * `actual_federated_convergence.jpg`: 50-round convergence trajectories comparing balanced training against Non-IID client drift.
+   * `confusion_matrix_iid.png`
+   * `confusion_matrix_non_iid.png`
+   * `actual_federated_convergence.jpg`
 
 ---
 
